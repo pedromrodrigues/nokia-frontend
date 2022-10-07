@@ -30,8 +30,9 @@
 <script lang="ts">
 /* eslint-disable */
 
-import { Vue } from 'vue-class-component';
+import { Component, Vue } from 'vue-property-decorator';
 
+@Component
 export default class LoginCard extends Vue {
     username: string = '';
     password: string = '';

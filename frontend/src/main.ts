@@ -1,21 +1,17 @@
-import { createApp } from 'vue'
+import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
-import TopBar from './components/TopBar.vue'
-import LoginCard from './components/LoginCard.vue'
 import axios from 'axios'
-import { loadFonts } from './plugins/webfontloader'
 
-loadFonts()
+Vue.config.productionTip = false
 
 axios.defaults.baseURL = 'http://127.0.0.1:8000'
 
-createApp(App)
-  .use(router, axios)
-  .use(store)
-  .use(vuetify)
-  .component('TopBar', TopBar)
-  .component('LoginCard', LoginCard)
-  .mount('#app')
+new Vue({
+  router,
+  store,
+  vuetify,
+  render: h => h(App)
+}).$mount('#app')

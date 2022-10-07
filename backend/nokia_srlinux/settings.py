@@ -28,13 +28,15 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
-    "http://127.0.0.1:8000"
+    "http://localhost:8081",
+    "http://127.0.0.1:8000",
+    "http://localhost:8080"
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -53,11 +55,16 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_auth',
     'corsheaders',
     'djoser',
 
-    'apps.user.apps.UserConfig',
-    'apps.container.apps.ContainerConfig'
+    'apps.container.apps.ContainerConfig',
+    'apps.accounts.apps.AccountsConfig',
+    'apps.interfaces.apps.InterfacesConfig',
+    'apps.vrfs.apps.VrfsConfig',
+    'apps.agent.apps.AgentConfig',
+    'apps.switch.apps.SwitchConfig',
 ]
 
 MIDDLEWARE = [

@@ -8,14 +8,14 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import TopBar from './components/TopBar.vue';
+import { Component, Vue } from 'vue-property-decorator';
+import TopBar from '@/components/TopBar.vue';
 import axios from 'axios';
-import './assets/css/_global.scss';
-import './assets/css/_scrollbar.scss';
+import '@/assets/css/_global.scss';
+import '@/assets/css/_scrollbar.scss';
 
-@Options({
-  options: { TopBar }
+@Component({
+  components: { TopBar }
 })
 
 export default class App extends Vue {
@@ -31,10 +31,6 @@ export default class App extends Vue {
       axios.defaults.headers.common['Authorization'] = "";
     }
 
-  }
-
-  created() {
-    console.log('lol')
   }
   
 }

@@ -1,32 +1,23 @@
 from django.shortcuts import render
-from rest_framework import viewsets
 from .serializers import ContainerSerializer
+from .container import Container
 import docker
 import json
 from json import JSONEncoder
 from django.http import HttpResponse
 from rest_framework.renderers import JSONRenderer
-
-class Container:
-    def __init__(self, container_id, name, ip_address, ip6_address, image, state):
-        self.container_id = container_id
-        self.name = name
-        self.ip_address = ip_address
-        self.ip6_address = ip6_address
-        self.image = image
-        self.state = state
-
-class Encoder(JSONEncoder):
-    def default(self, j):
-        return j.__dict__
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_containers(request):
 
     containers_list = []
-
     socket_url = 'unix://var/run/docker.sock'
-
     client = docker.DockerClient(base_url=socket_url)
 
     for c in client.containers.list():
@@ -38,13 +29,9 @@ def get_containers(request):
             c.attrs['Config']['Image'],
             c.status
         )
-
-        #container_json = json.dumps(container, indent=4, cls=Encoder)
-
         containers_list.append(container)
 
     serializer = ContainerSerializer(containers_list, many=True)
-
     containers_json = JSONRenderer().render(serializer.data)
 
     return HttpResponse(containers_json)

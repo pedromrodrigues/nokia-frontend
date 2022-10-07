@@ -5,8 +5,11 @@
             <v-app-bar-nav-icon 
                 v-if="$store.state.isAuthenticated"
                 @click.stop="drawer = !drawer"
-                color="white"
             ></v-app-bar-nav-icon>
+            <v-app-bar-title
+                v-if="$store.state.isAuthenticated"
+            >Menu
+            </v-app-bar-title>
             <v-spacer />
 
             <v-btn
@@ -14,6 +17,7 @@
                 dark
                 text
                 color="white"
+                @click="logout"
             > 
             Logout
             </v-btn>
@@ -23,7 +27,6 @@
             v-if="$store.state.isAuthenticated"
             v-model="drawer"
             absolute
-            bottom
             temporary
         >
             <v-list
@@ -39,9 +42,23 @@
             </v-list>
             <v-divider></v-divider>
             <v-list>
-                <v-list-item>
-                    <v-list-item-title>Containers</v-list-item-title>
-                </v-list-item>
+                <v-list-item-group
+                    v-model="selectedItem"
+                    color="primary"
+                >
+                    <v-list-item
+                        v-for="item in items"
+                        :key="item.text"
+                        @click="forwarding(item.text)"
+                    >
+                        <v-list-item-icon>
+                            <v-icon v-text="item.icon"></v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title v-text="item.text"></v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list-item-group>
             </v-list>
         </v-navigation-drawer>
     </nav>
@@ -49,28 +66,47 @@
 
 <script lang="ts">
 /* eslint-disable */
-import { Options, Vue } from 'vue-class-component';
-import axios from 'axios';
+import { Component, Vue } from 'vue-property-decorator';
 
+@Component
 export default class TopBar extends Vue {
     appName: string = process.env.VUE_APP_NAME || 'ENV FILE MISSING';
     drawer: boolean = false;
+    selectedItem = '';
+
+    items = [
+        { text: 'Switches', icon: 'mdi-server-network' },
+        { text: 'Containers', icon: 'mdi-router-network' },
+        { text: 'Account', icon: 'mdi-account' },
+    ];
 
     async logout() {
+        await this.$store.dispatch('logout');
+        await this.$router.push({ name: 'home' }).catch(() => {});
+    }
 
-        console.log("Logging out...")
-
-        axios
-            .post("/api/v1/token/logout/")
-            .then(response => {
-                axios.defaults.headers.common["Authorization"] = ""
-
-                localStorage.removeItem("token")
-
-                this.$store.commit('removeToken')
-
-                this.$router.push('/')
-            })
+    async forwarding(option: string) {
+        if (option === 'Containers') {
+            if ( this.$route.name === 'dashboard' ) {
+                this.$router.go(0);
+            } else {
+                this.$router.push({ name: 'dashboard' }).catch(() => {});
+            }
+        }
+        if (option === 'Account') {
+            if (this.$route.name === 'account' ) {
+                this.$router.go(0);
+            } else {
+                this.$router.push({ name: 'account' }).catch(() => {});
+            }
+        }
+        if (option === 'Switches') {
+            if (this.$route.name === 'switches') {
+                this.$router.go(0);
+            } else {
+                this.$router.push({ name: 'switches' }).catch(() => {});
+            }
+        }
     }
 }
 </script>

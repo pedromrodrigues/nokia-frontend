@@ -9,67 +9,82 @@
                 hide-details
             ></v-text-field>
         </v-card-title>
+        <v-data-table
+            class="row-pointer"
+            @click:row="item => forwarding(item)"
+            fixed-header
+            :headers="headers"
+            :items="containers"
+            :search="search"
+        ></v-data-table>
     </v-card>
             
 
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-class-component';
-import axios from 'axios';
+import { Component, Vue } from 'vue-property-decorator';
+import RemoteServices from '../services/RemoteServices';
 import Container from '../models/Container';
 
+@Component
 export default class DashboardView extends Vue {
 
     containers: Container[] = [];
     search = '';
+    headers = [
+        {
+            text: 'Name',
+            value: 'name',
+            align: 'start',
+        },
+        {
+            text: 'ID', value: 'container_id',
+        },
+        
+        {
+            text: 'IPv4 Address', value: 'ip_address',
+        },
+        {
+            text: 'IPv6 Address', value: 'ip6_address',
+        },
+        {
+            text: 'Image', value: 'image',
+        },
+        {
+            text: 'State', value: 'state',
+        }
+    ];
 
     async created() {
+
         try {
-            console.log("OLA")
-            //console.log(this.containers.length)
-            this.containers = await this.get_containers()
-            console.log(this.containers)
-            for (let i = 0; i < this.containers.length; i++) {
-                console.log(this.containers[i].name)
-            }
+            this.containers = await RemoteServices.getContainers();
         } catch (error) {
-            console.log("ERROOO " + error)
+            console.log(error);
+            await this.$store.dispatch('error', error);
         }
     }
 
-    async get_containers(): Promise<Container[]> {
-
-        return axios
-            .get('api/v1/containers')
-            .then(response => {
-                //for (let i = 0; i < response.data.length; i++) {
-                //    console.log(response.data[i])
-                //}
-
-                return response.data.map((container: any) => {
-                    return new Container(container);
-                })
-            })
-            .catch(async (error) => {
-                console.log(JSON.stringify(error))
-            })
+    async forwarding(container: Container) {
+        try {
+            await this.$store.dispatch('currentContainer', container);
+            await this.$router.push({ name: 'container-options' });
+        } catch (error) {
+            await this.$store.dispatch('error', error);
+        }
     }
-
-
 
 }
 </script>
 
 <style lang="scss" scoped>
 
-.v-card {
-    //display: flex;
-    margin-top: 100px;
-    margin: 100px;
-    //padding-top: 100px;
+.row-pointer > .v-data-table__wrapper > table > tbody > tr > td:hover {
+    cursor: pointer;
+}
 
-    
-    
+.v-card {
+    margin: 80px;
 }
 </style>

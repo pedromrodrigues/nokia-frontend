@@ -7,47 +7,29 @@
 <script lang="ts">
 /* eslint-disable */
 
-import { Options, Vue } from 'vue-class-component';
-import LoginCard from '../components/LoginCard.vue';
-import axios from 'axios';
+import { Component , Vue } from 'vue-property-decorator';
+import LoginCard from '@/components/LoginCard.vue';
 
-@Options({
-  options: { LoginCard }
+@Component({
+  components: { 'login-card': LoginCard }
 })
 
 export default class HomeView extends Vue {
 
-  errors = [];
-
   async created() {}
 
   async login(username: string, password: string) {
-
-    console.log(username + ' ' + password);
-
-    axios.defaults.headers.common["Authorization"] = "";
-
-    localStorage.removeItem("token");
-
     const formData = {
       username,
       password
     }
-
-    axios
-      .post("/api/v1/token/login", formData)
-      .then(response => {
-
-        const token = response.data.auth_token;
-
-        this.$store.commit('setToken', token)
-
-        axios.defaults.headers.common["Authorization"] = "Token" + token
-
-        localStorage.setItem("token", token)
-
-        this.$router.push('/dashboard')
-      })
+    try {
+      await this.$store.dispatch('login', formData);
+      await this.$router.push({ name: 'switches' });
+    
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
   }
 }
 
@@ -69,3 +51,4 @@ export default class HomeView extends Vue {
   }
 }
 </style>
+

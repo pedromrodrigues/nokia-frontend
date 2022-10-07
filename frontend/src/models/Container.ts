@@ -1,8 +1,8 @@
 export default class Container {
     container_id!: string;
     name!: string;
-    IPAddress!: string;
-    IP6Address!: string;
+    ip_address!: string;
+    ip6_address!: string;
     image!: string;
     state!: string;
 
@@ -10,8 +10,8 @@ export default class Container {
         if (jsonObj) {
             this.container_id = jsonObj.container_id;
             this.name = jsonObj.name;
-            this.IPAddress = jsonObj.IPAddress;
-            this.IP6Address = jsonObj.IP6Address;
+            this.ip_address = jsonObj.ip_address;
+            this.ip6_address = jsonObj.ip6_address;
             this.image = jsonObj.image;
             this.state = jsonObj.state;
         }
