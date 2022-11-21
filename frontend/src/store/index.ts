@@ -132,6 +132,9 @@ export default new Vuex.Store({
     getToken(state): string {
       return state.token;
     },
+    isAuthenticated(state): boolean {
+      return state.isAuthenticated;
+    },
     getUser(state): AuthUser | null {
       return state.user;
     },

@@ -9,6 +9,7 @@
 
 import { Component , Vue } from 'vue-property-decorator';
 import LoginCard from '@/components/LoginCard.vue';
+import { AxiosError } from 'axios';
 
 @Component({
   components: { 'login-card': LoginCard }
@@ -16,7 +17,11 @@ import LoginCard from '@/components/LoginCard.vue';
 
 export default class HomeView extends Vue {
 
-  async created() {}
+  async created() {
+    if (this.$store.getters.isAuthenticated) {
+      await this.$router.push({ name: 'switches' });
+    }
+  }
 
   async login(username: string, password: string) {
     const formData = {

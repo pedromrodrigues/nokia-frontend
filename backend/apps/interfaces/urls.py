@@ -1,7 +1,7 @@
-from django.urls import path, include, re_path
+from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('interfaces/<str:container>', views.get_interfaces, name="interfaces"),
-    path('interfaces/config/<str:container>/<path:iface_name>', views.get_interface_config, name="interfaces_config")
+    path('interfaces/<str:hostname>', views.get_interfaces, name="interfaces"),
+    path('interfaces/config/<str:hostname>/<path:iface_name>', views.get_interface_config, name="interfaces_config")
 ]

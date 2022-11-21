@@ -2,6 +2,8 @@
   <v-app id="app">
     <top-bar />
     <div class="scrollbar">
+      <error-message />
+      <notification />
       <router-view />
     </div>
   </v-app>
@@ -10,27 +12,27 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import TopBar from '@/components/TopBar.vue';
+import ErrorMessage from '@/components/ErrorMessage.vue';
+import Notification from '@/components/Notification.vue';
 import axios from 'axios';
 import '@/assets/css/_global.scss';
 import '@/assets/css/_scrollbar.scss';
 
 @Component({
-  components: { TopBar }
+  components: { TopBar, ErrorMessage, Notification }
 })
 
 export default class App extends Vue {
 
-  beforeCreate() {
-    this.$store.commit('initializeStore');
-
-    const token = this.$store.state.token;
-
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = "Token " + token;
-    } else {
-      axios.defaults.headers.common['Authorization'] = "";
-    }
-
+  created() {
+    axios.interceptors.response.use(undefined, (err) => {
+      return new Promise(() => {
+        if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
+          this.$store.dispatch('logout');
+        }
+        throw err;
+      });
+    });
   }
   
 }

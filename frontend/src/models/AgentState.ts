@@ -6,7 +6,7 @@ export default class AgentState {
     tests_performed!: string;
     success_tests!: string;
     unsuccess_tests!: string;
-    status_up!: boolean;
+    status_up!: string;
     rtt_min!: string;
     rtt_max!: string;
     rtt_avg!: string;
@@ -29,6 +29,18 @@ export default class AgentState {
 
             if (jsonObj.last_update) {
                 this.last_update = ISOtoString(this.last_update);
+            }
+
+            if (jsonObj.status_up && jsonObj.admin_state) {
+                if (this.status_up) {
+                    this.status_up = 'Service up';
+                } 
+                else if (!this.status_up) {
+                    this.status_up = 'Service down';
+                }
+                else if (this.admin_state === 'disable') {
+                    this.status_up = 'Test not running';
+                }
             }
         }
     }

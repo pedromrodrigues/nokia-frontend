@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from .serializers import SwitchSerializer
 from .models import Switch
 from django.shortcuts import render
@@ -8,12 +7,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from rest_framework.response import Response
 from django.core import serializers
 from django.core.exceptions import PermissionDenied
-import json
-
-
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])

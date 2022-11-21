@@ -1,3 +1,41 @@
+def agent_admin_state_payload():
+
+    payload = {
+        "jsonrpc": "2.0",
+        "id": 0,
+        "method": "get",
+        "params": {
+            "commands": [
+                {
+                "path": "/overlay-test/admin-state",
+                "datastore": "running",
+                "recursive": False
+                },
+            ],
+        }
+    }
+
+    return payload
+
+def set_agent_admin_state_payload(data):
+
+    payload = {
+        "jsonrpc": "2.0",
+        "id": 0,
+        "method": "set",
+        "params": {
+            "commands": [
+                {
+                "action": "update",
+                "path": f"/overlay-test/admin-state:{data['admin_state']}",
+                },
+            ],
+        }
+    }
+
+    return payload
+
+
 def agent_config_payload():
 
     payload = {
@@ -7,7 +45,7 @@ def agent_config_payload():
         "params": {
             "commands": [
                 {
-                "path": "/ping-test",
+                "path": "/overlay-test",
                 "datastore": "running",
                 "recursive": True
                 },
@@ -27,12 +65,12 @@ def agent_state_payload():
         "params": {
             "commands": [
                 {
-                "path": "/ping-test",
+                "path": "/overlay-test",
                 "datastore": "state",
                 "recursive": True
                 },
                 {
-                "path": "/ping-test",
+                "path": "/overlay-test",
                 "datastore": "running",
                 "recursive": True
                 },
@@ -52,7 +90,7 @@ def agent_running_payload(data):
             "commands": [
                 {
                 "action": "update",
-                "path": f"/ping-test/targets[IP-FQDN={data['destinationIP']}]",
+                "path": f"/overlay-test/targets[IP-FQDN={data['destinationIP']}]",
                 "value": {
                     "admin-state": "enable",
                     "network-instance": f"{data['netinst']}",
@@ -71,5 +109,44 @@ def agent_running_payload(data):
         payload['params']['commands'][0]['value'].update({'number-of-packets': data['numberPackets']})
     if (data['time']):
         payload['params']['commands'][0]['value'].update({'interval-period': data['time']})
+
+    return payload
+
+def set_agent_test_admin_state_payload(data):
+
+    payload = {
+        "jsonrpc": "2.0",
+        "id": 0,
+        "method": "set",
+        "params": {
+            "commands": [
+                {
+                "action": "update",
+                "path": f"/overlay-test/targets[IP-FQDN={data['destinationIP']}]",
+                "value": {
+                    "admin-state": f"{data['admin_state']}",
+                }
+                },
+            ],
+        }
+    }
+
+    return payload
+
+def delete_agent_test_payload(data):
+
+    payload = {
+        "jsonrpc": "2.0",
+        "id": 0,
+        "method": "set",
+        "params": {
+            "commands": [
+                {
+                "action": "delete",
+                "path": f"/overlay-test/targets[IP-FQDN={data['destinationIP']}]",
+                },
+            ],
+        }
+    }
 
     return payload

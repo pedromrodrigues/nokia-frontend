@@ -76,7 +76,6 @@ export default class TopBar extends Vue {
 
     items = [
         { text: 'Switches', icon: 'mdi-server-network' },
-        { text: 'Containers', icon: 'mdi-router-network' },
         { text: 'Account', icon: 'mdi-account' },
     ];
 
@@ -86,13 +85,6 @@ export default class TopBar extends Vue {
     }
 
     async forwarding(option: string) {
-        if (option === 'Containers') {
-            if ( this.$route.name === 'dashboard' ) {
-                this.$router.go(0);
-            } else {
-                this.$router.push({ name: 'dashboard' }).catch(() => {});
-            }
-        }
         if (option === 'Account') {
             if (this.$route.name === 'account' ) {
                 this.$router.go(0);

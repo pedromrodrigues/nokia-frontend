@@ -157,6 +157,7 @@ export default class RemoteServices {
                 });
             })
             .catch(async (error) => {
+                console.log(error.response.data)
                 throw Error(await this.errorMessage(error));
             });
     }
@@ -236,6 +237,61 @@ export default class RemoteServices {
             })
     }
 
+    static async getAgentAdminState(
+        sr_hostname: string
+    ) {
+        return httpClient
+            .get(`api/v1/agentstate/${sr_hostname}/adminstate`)
+            .then((response) => {
+                return response.data;
+            })
+            .catch(async (error) => {
+                throw Error(await this.errorMessage(error));
+            })
+    }
+
+    static async setAgentAdminState(
+        sr_hostname: string,
+        admin_state: Record<string,unknown>
+    ) {
+        return httpClient
+            .post(`api/v1/agentstate/${sr_hostname}/adminstate/set`, admin_state)
+            .then((response) => {
+                return response.data;
+            })
+            .catch(async (error) => {
+                throw Error(await this.errorMessage(error));
+            })
+    }
+
+    static async setAgentTestAdminState(
+        sr_hostname: string,
+        data: Record<string,unknown>
+    ) {
+        return httpClient
+            .post(`api/v1/agentstate/${sr_hostname}/test/adminstate/set`, data)
+            .then((response) => {
+                return response.data;
+            })
+            .catch(async (error) => {
+                throw Error(await this.errorMessage(error));
+            })
+    }
+
+    static async deleteAgentTest(
+        sr_hostname: string,
+        data: Record<string,unknown>
+    ) {
+        return httpClient
+            .post(`api/v1/agentstate/${sr_hostname}/test/delete`, data)
+            .then((response) => {
+                return response.data;
+            })
+            .catch(async (error) => {
+                throw Error(await this.errorMessage(error));
+            })
+    }
+
     static async getAgentState(
         container: string
     ) {
@@ -272,10 +328,11 @@ export default class RemoteServices {
             await Store.dispatch('logout');
             await router.push({ path: '/' });
             return 'Unauthorized access or expired token';
-        } else if (error.message.split(' ')[0] === 'timeout') {
-            return 'Request timeout - Server took too long to response';
+        } else if (error.response.data.non_field_errors) {
+            console.log("ESTOU AQUI!")
+            return error.response.data.non_field_errors[0];
         } else if (error.response) {
-            return error.response.data.message;
+            return error.response.data;
         } else {
             console.log(error);
             return 'Unknown error - Contact admin';

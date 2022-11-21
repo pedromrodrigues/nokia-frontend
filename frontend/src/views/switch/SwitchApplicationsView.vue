@@ -12,9 +12,10 @@
         >
             <v-tab
                 v-for="item in items"
-                :key="item"
+                :key="item.tab"
+                @change="updateActiveTab(item.tab)"
             >
-                {{ item }}
+                {{ item.tab }}
             </v-tab>
         </v-tabs>
 
@@ -27,7 +28,7 @@
             <v-tab-item
                 v-if="item = 'Software Agent'"
             >
-                <software-agent-state />
+                <software-agent-state v-if="softwareAgentActive"/>
             </v-tab-item>
         </v-tabs-items>
             
@@ -42,25 +43,33 @@
 import Switch from '@/models/Switch';
 import { Component, Vue } from 'vue-property-decorator';
 import SwitchConfigurations from '@/components/applications/SwitchConfigurations.vue';
-//import SoftwareAgent from '@/components/agent/SoftwareAgent.vue';
 import SoftwareAgentState from '@/components/agent/SoftwareAgentState.vue'
 
 @Component({
-    components: { SwitchConfigurations, 'software-agent-state': SoftwareAgentState },
+    components: { 'switch-configurations': SwitchConfigurations, 'software-agent-state': SoftwareAgentState },
 })
 export default class SwitchApplicationsView extends Vue {
     
     switch: Switch | null = this.$store.getters.getCurrentSwitch;
     title = "Switch " + this.switch?.name + " Options";
     tab = null;
+    softwareAgentActive = false;
     items = [
-        'Configurations',
-        'Software Agent',
+        { tab: 'Configurations', content: 'switch-configurations', route: `/switches/${this.switch?.hostname}/configurations` },
+        { tab: 'Software Agent', content: 'software-agent-state', route: `/switches/${this.switch?.hostname}/softwareagent` }
     ]
 
     async created() {
         if (!this.switch?.hostname) {
             await this.$router.push({ name: 'switches' });
+        }
+    }
+
+    updateActiveTab(tab: string) {
+        if (tab === 'Software Agent') {
+            this.softwareAgentActive = true;
+        } else {
+            this.softwareAgentActive = false;
         }
     }
     
