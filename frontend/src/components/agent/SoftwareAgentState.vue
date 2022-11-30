@@ -171,6 +171,8 @@ export default class SoftwareAgentState extends Vue {
         this.targets_state = await RemoteServices.getAgentState(
           this.$store.getters.getCurrentSwitch.hostname
         );
+        this.targets_config = await RemoteServices.getAgentConfig(
+          this.$store.getters.getCurrentSwitch.hostname
       }, 5000);
     } catch (error) {
       await this.$store.dispatch("error", error);
